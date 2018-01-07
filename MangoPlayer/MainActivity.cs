@@ -35,6 +35,11 @@ namespace MangoPlayer
         const string feedTopSuffixMonth = "month";
         const string feedTopSuffixWeek = "week";
 
+        BrowseMode browseMode = BrowseMode.Latest;
+
+
+        enum BrowseMode { Latest, AllTime, Year, Month, Week };
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -44,7 +49,7 @@ namespace MangoPlayer
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
-            debugAlertMessage ("onafter_SetContentView");
+            debugAlertMessage("onafter_SetContentView");
 
             var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
 
@@ -74,7 +79,7 @@ namespace MangoPlayer
 
             //Latest
             fullFeedUrl = feedUrlPrefix + currentPageIndex;
-            
+
 
             refresh();
             debugAlertMessage("onafter_refresh");
@@ -133,12 +138,11 @@ namespace MangoPlayer
                 browseMode_topYear.SetChecked(false);
                 browseMode_topMonth.SetChecked(false);
                 browseMode_topWeek.SetChecked(false);
-
+                browseMode = BrowseMode.Latest;
                 refresh();
             }
             else if (item.TitleFormatted.ToString() == "Top - All Time")
             {
-                fullFeedUrl = feedUrlPrefix + currentPageIndex + feedUrlSuffix + feedTopSuffixAllTime;
                 ActionBar.Title = "Top - All Time";
 
                 browseMode_latest.SetChecked(false);
@@ -146,12 +150,12 @@ namespace MangoPlayer
                 browseMode_topYear.SetChecked(false);
                 browseMode_topMonth.SetChecked(false);
                 browseMode_topWeek.SetChecked(false);
+                browseMode = BrowseMode.AllTime;
 
                 refresh();
             }
             else if (item.TitleFormatted.ToString() == "Top - Year")
             {
-                fullFeedUrl = feedUrlPrefix + currentPageIndex + feedUrlSuffix + feedTopSuffixYear;
                 ActionBar.Title = "Top - Year";
 
                 browseMode_latest.SetChecked(false);
@@ -159,12 +163,12 @@ namespace MangoPlayer
                 browseMode_topYear.SetChecked(true);
                 browseMode_topMonth.SetChecked(false);
                 browseMode_topWeek.SetChecked(false);
+                browseMode = BrowseMode.Year;
 
                 refresh();
             }
             else if (item.TitleFormatted.ToString() == "Top - Month")
             {
-                fullFeedUrl = feedUrlPrefix + currentPageIndex + feedUrlSuffix + feedTopSuffixMonth;
                 ActionBar.Title = "Top - Month";
 
                 browseMode_latest.SetChecked(false);
@@ -172,13 +176,13 @@ namespace MangoPlayer
                 browseMode_topYear.SetChecked(false);
                 browseMode_topMonth.SetChecked(true);
                 browseMode_topWeek.SetChecked(false);
+                browseMode = BrowseMode.Month;
 
                 refresh();
 
             }
             else if (item.TitleFormatted.ToString() == "Top - Week")
             {
-                fullFeedUrl = feedUrlPrefix + currentPageIndex + feedUrlSuffix + feedTopSuffixWeek;
                 ActionBar.Title = "Top - Week";
 
                 browseMode_latest.SetChecked(false);
@@ -186,6 +190,7 @@ namespace MangoPlayer
                 browseMode_topYear.SetChecked(false);
                 browseMode_topMonth.SetChecked(false);
                 browseMode_topWeek.SetChecked(true);
+                browseMode = BrowseMode.Week;
 
                 refresh();
             }
@@ -216,6 +221,28 @@ namespace MangoPlayer
             //refreshButton.Enabled = false;
             try
             {
+                if(browseMode == BrowseMode.Latest)
+                {
+                    fullFeedUrl = feedUrlPrefix + currentPageIndex;
+                }
+                else if (browseMode == BrowseMode.AllTime)
+                {
+
+                    fullFeedUrl = feedUrlPrefix + currentPageIndex + feedUrlSuffix + feedTopSuffixAllTime;
+                }
+                else if (browseMode == BrowseMode.Year)
+                {
+                    fullFeedUrl = feedUrlPrefix + currentPageIndex + feedUrlSuffix + feedTopSuffixYear;
+                }
+                else if (browseMode == BrowseMode.Month)
+                {
+                    fullFeedUrl = feedUrlPrefix + currentPageIndex + feedUrlSuffix + feedTopSuffixMonth;
+                }
+                else if (browseMode == BrowseMode.Week)
+                {
+                    fullFeedUrl = feedUrlPrefix + currentPageIndex + feedUrlSuffix + feedTopSuffixWeek;
+                }
+
                 string urlToGet = fullFeedUrl;
                 curPageVideoList = fetchBOYTPageVideos(urlToGet);
 
