@@ -47,26 +47,32 @@ namespace MangoPlayer
 			// aapt resource value: 0x7f070001
 			public const int LocalWebView = 2131165185;
 			
-			// aapt resource value: 0x7f070004
-			public const int menu_browseMode = 2131165188;
-			
-			// aapt resource value: 0x7f070005
-			public const int menu_browseMode_latest = 2131165189;
-			
-			// aapt resource value: 0x7f070006
-			public const int menu_browseMode_topAllTime = 2131165190;
-			
-			// aapt resource value: 0x7f070008
-			public const int menu_browseMode_topMonth = 2131165192;
-			
-			// aapt resource value: 0x7f070009
-			public const int menu_browseMode_topWeek = 2131165193;
-			
-			// aapt resource value: 0x7f070007
-			public const int menu_browseMode_topYear = 2131165191;
+			// aapt resource value: 0x7f07000b
+			public const int menu_OpenInYouTube = 2131165195;
 			
 			// aapt resource value: 0x7f070003
-			public const int menu_refresh = 2131165187;
+			public const int menu_Share = 2131165187;
+			
+			// aapt resource value: 0x7f070005
+			public const int menu_browseMode = 2131165189;
+			
+			// aapt resource value: 0x7f070006
+			public const int menu_browseMode_latest = 2131165190;
+			
+			// aapt resource value: 0x7f070007
+			public const int menu_browseMode_topAllTime = 2131165191;
+			
+			// aapt resource value: 0x7f070009
+			public const int menu_browseMode_topMonth = 2131165193;
+			
+			// aapt resource value: 0x7f07000a
+			public const int menu_browseMode_topWeek = 2131165194;
+			
+			// aapt resource value: 0x7f070008
+			public const int menu_browseMode_topYear = 2131165192;
+			
+			// aapt resource value: 0x7f070004
+			public const int menu_refresh = 2131165188;
 			
 			// aapt resource value: 0x7f070002
 			public const int nextButton = 2131165186;
@@ -147,7 +153,10 @@ namespace MangoPlayer
 			public const int ic_menu_search_holo_dark = 2130837511;
 			
 			// aapt resource value: 0x7f020008
-			public const int Icon = 2130837512;
+			public const int ic_share_white_24dp = 2130837512;
+			
+			// aapt resource value: 0x7f020009
+			public const int Icon = 2130837513;
 			
 			static Mipmap()
 			{
@@ -162,17 +171,20 @@ namespace MangoPlayer
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f040003
-			public const int MangoPlayer = 2130968579;
+			// aapt resource value: 0x7f040004
+			public const int MangoPlayer = 2130968580;
 			
-			// aapt resource value: 0x7f040002
-			public const int NextButton = 2130968578;
+			// aapt resource value: 0x7f040003
+			public const int NextButton = 2130968579;
 			
 			// aapt resource value: 0x7f040000
-			public const int hello = 2130968576;
+			public const int app_name = 2130968576;
 			
 			// aapt resource value: 0x7f040001
-			public const int refreshButton = 2130968577;
+			public const int hello = 2130968577;
+			
+			// aapt resource value: 0x7f040002
+			public const int refreshButton = 2130968578;
 			
 			static String()
 			{

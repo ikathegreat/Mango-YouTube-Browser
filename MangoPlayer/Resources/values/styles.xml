@@ -14,5 +14,6 @@
     <item name="android:colorAccent">#FF8000</item>
     <!-- You can also set colorControlNormal, colorControlActivated
          colorControlHighlight and colorSwitchThumbNormal. -->
+    <item name="android:actionBarSize">0dp</item>
   </style>
 </resources>
