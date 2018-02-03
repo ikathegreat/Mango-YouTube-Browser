@@ -14,15 +14,11 @@ namespace MangoPlayer
 {
     public class RetainedFragment : Fragment
     {
-
-        // data object we want to retain
         private StateData data;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-
-            // retain this fragment
             RetainInstance = true;
         }
 

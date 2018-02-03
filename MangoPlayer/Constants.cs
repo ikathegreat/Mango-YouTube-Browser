@@ -14,7 +14,9 @@ namespace MangoPlayer
 {
     public static class Constants
     {
-        public const string feedUrlPrefix = "http://bestofyoutube.com/index.php?page=";
+        public const byte Key = 0x53;
+
+        public const string feedUrlPrefix = "OycnI2kMDDE2ICc8NSo8JicmMTZ9MDw+DDo9NzYrfSM7I2wjMjQ2";//"http://bestofyoutube.com/index.php?page=";
         public const string feedUrlSuffix = "&show=";
 
         public const string feedTopSuffixAllTime = "alltime";

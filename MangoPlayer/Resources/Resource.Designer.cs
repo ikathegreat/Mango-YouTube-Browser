@@ -135,7 +135,7 @@ namespace MangoPlayer
 			public const int ic_action_content_save = 2130837505;
 			
 			// aapt resource value: 0x7f020002
-			public const int ic_add_to_queue_black_48dp = 2130837506;
+			public const int ic_add_to_queue_black = 2130837506;
 			
 			// aapt resource value: 0x7f020003
 			public const int ic_autorenew_white_24dp = 2130837507;
@@ -188,6 +188,9 @@ namespace MangoPlayer
 			
 			// aapt resource value: 0x7f040005
 			public const int BrowseMode_TopYear = 2130968581;
+			
+			// aapt resource value: 0x7f04000c
+			public const int Error_NoVideos = 2130968588;
 			
 			// aapt resource value: 0x7f040001
 			public const int MangoPlayer = 2130968577;

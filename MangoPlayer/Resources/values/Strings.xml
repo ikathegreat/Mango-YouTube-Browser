@@ -12,4 +12,5 @@
   <string name="Share">Share</string>
   <string name="Refresh">Refresh</string>
   <string name="Refreshed">Refreshed</string>
+  <string name="Error_NoVideos">Error: Cannot retrieve videos</string>
 </resources>

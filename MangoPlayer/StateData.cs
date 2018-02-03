@@ -13,7 +13,7 @@ using static MangoPlayer.Constants;
 
 namespace MangoPlayer
 {
-   public class StateData
+    public class StateData
     {
         /// <summary>
         /// Representation of current application settings or variables
@@ -25,7 +25,7 @@ namespace MangoPlayer
             currentVideoIndex = 0;
             currentPageVideoList = new List<string>();
             browseMode = BrowseMode.Latest;
-            fullFeedUrl = feedUrlPrefix + currentPageIndex;
+            fullFeedUrl = string.Empty;
         }
 
         private int currentPageIndex;
@@ -36,7 +36,13 @@ namespace MangoPlayer
 
         public string FullFeedUrl
         {
-            get { return fullFeedUrl; }
+            get
+            {
+                if (string.IsNullOrEmpty(fullFeedUrl))
+                    fullFeedUrl = SecurityHelper.Decrypt(feedUrlPrefix) + currentPageIndex;
+
+                return fullFeedUrl;
+            }
             set { fullFeedUrl = value; }
         }
 
@@ -56,8 +62,8 @@ namespace MangoPlayer
         {
             get { return currentVideoIndex; }
             set { currentVideoIndex = value; }
-        }        
-        
+        }
+
         public int CurrentPageIndex
         {
             get { return currentPageIndex; }

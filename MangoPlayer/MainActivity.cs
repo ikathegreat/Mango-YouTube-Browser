@@ -13,7 +13,7 @@ using static MangoPlayer.Constants;
 
 namespace MangoPlayer
 {
-    [Activity(Label = "Mango Player", MainLauncher = true, Icon = "@mipmap/ic_add_to_queue_black_48dp")]
+    [Activity(Label = "Mango Player", MainLauncher = true, Icon = "@mipmap/ic_add_to_queue_black")]
     public class MainActivity : Activity
     {
         bool showDebugMessage = false;
@@ -26,7 +26,6 @@ namespace MangoPlayer
         IMenuItem browseMode_topWeek;
 
         private RetainedFragment mRetainedFragment;
-        private ShareActionProvider mShareActionProvider;
         private StateData stateData = new StateData();
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -56,6 +55,7 @@ namespace MangoPlayer
 
             nextButton.Click += delegate { navigateToNextVideo(); };
 
+            string temp = SecurityHelper.Crypt("http://bestofyoutube.com/index.php?page=");
             // find the retained fragment on activity restarts
             mRetainedFragment = (RetainedFragment)FragmentManager.FindFragmentByTag(TAG_RETAINED_FRAGMENT);
             if (mRetainedFragment != null)
@@ -245,31 +245,40 @@ namespace MangoPlayer
             switch (stateData.BrowseMode)
             {
                 case BrowseMode.Latest:
-                    stateData.FullFeedUrl = feedUrlPrefix + stateData.CurrentPageIndex;
+                    stateData.FullFeedUrl = SecurityHelper.Decrypt(feedUrlPrefix) + stateData.CurrentPageIndex;
                     break;
                 case BrowseMode.AllTime:
-                    stateData.FullFeedUrl = feedUrlPrefix + stateData.CurrentPageIndex + feedUrlSuffix + feedTopSuffixAllTime;
+                    stateData.FullFeedUrl = SecurityHelper.Decrypt(feedUrlPrefix) + stateData.CurrentPageIndex + feedUrlSuffix + feedTopSuffixAllTime;
                     break;
                 case BrowseMode.Year:
-                    stateData.FullFeedUrl = feedUrlPrefix + stateData.CurrentPageIndex + feedUrlSuffix + feedTopSuffixYear;
+                    stateData.FullFeedUrl = SecurityHelper.Decrypt(feedUrlPrefix) + stateData.CurrentPageIndex + feedUrlSuffix + feedTopSuffixYear;
                     break;
                 case BrowseMode.Month:
-                    stateData.FullFeedUrl = feedUrlPrefix + stateData.CurrentPageIndex + feedUrlSuffix + feedTopSuffixMonth;
+                    stateData.FullFeedUrl = SecurityHelper.Decrypt(feedUrlPrefix) + stateData.CurrentPageIndex + feedUrlSuffix + feedTopSuffixMonth;
                     break;
                 case BrowseMode.Week:
-                    stateData.FullFeedUrl = feedUrlPrefix + stateData.CurrentPageIndex + feedUrlSuffix + feedTopSuffixWeek;
+                    stateData.FullFeedUrl = SecurityHelper.Decrypt(feedUrlPrefix) + stateData.CurrentPageIndex + feedUrlSuffix + feedTopSuffixWeek;
                     break;
                 default:
-                    stateData.FullFeedUrl = feedUrlPrefix + stateData.CurrentPageIndex;
+                    stateData.FullFeedUrl = SecurityHelper.Decrypt(feedUrlPrefix) + stateData.CurrentPageIndex;
                     break;
             }
 
             string urlToGet = stateData.FullFeedUrl;
             stateData.CurrentPageVideoList = WebHelper.FetchVideoList(urlToGet);
 
+            if(stateData.CurrentPageVideoList.Count > 0)
+            {
+
             WebView localWebView = FindViewById<WebView>(Resource.Id.LocalWebView);
             localWebView.SetWebViewClient(new WebViewClient());
             localWebView.LoadUrl(stateData.CurrentPageVideoList[stateData.CurrentVideoIndex]);
+            }
+            else
+            {
+                //no videos
+                RunOnUiThread(() => Toast.MakeText(this, Resources.GetString(Resource.String.Error_NoVideos), ToastLength.Long).Show());
+            }
         }
 
 
