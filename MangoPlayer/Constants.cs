@@ -21,7 +21,9 @@ namespace MangoPlayer
         public const string feedTopSuffixYear = "year";
         public const string feedTopSuffixMonth = "month";
         public const string feedTopSuffixWeek = "week";
-        
+
+        public static readonly string TAG_RETAINED_FRAGMENT = "RetainedFragment";
+
         public enum BrowseMode { Latest, AllTime, Year, Month, Week };
     }
 }

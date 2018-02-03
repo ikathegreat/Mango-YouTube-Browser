@@ -50,9 +50,6 @@ namespace MangoPlayer
 			// aapt resource value: 0x7f07000b
 			public const int menu_OpenInYouTube = 2131165195;
 			
-			// aapt resource value: 0x7f070003
-			public const int menu_Share = 2131165187;
-			
 			// aapt resource value: 0x7f070005
 			public const int menu_browseMode = 2131165189;
 			
@@ -72,7 +69,10 @@ namespace MangoPlayer
 			public const int menu_browseMode_topYear = 2131165192;
 			
 			// aapt resource value: 0x7f070004
-			public const int menu_refresh = 2131165188;
+			public const int menu_item_share = 2131165188;
+			
+			// aapt resource value: 0x7f070003
+			public const int menu_refresh = 2131165187;
 			
 			// aapt resource value: 0x7f070002
 			public const int nextButton = 2131165186;
@@ -171,20 +171,41 @@ namespace MangoPlayer
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f040004
-			public const int MangoPlayer = 2130968580;
+			// aapt resource value: 0x7f040002
+			public const int BrowseMode = 2130968578;
 			
 			// aapt resource value: 0x7f040003
-			public const int NextButton = 2130968579;
+			public const int BrowseMode_Latest = 2130968579;
 			
-			// aapt resource value: 0x7f040000
-			public const int app_name = 2130968576;
+			// aapt resource value: 0x7f040004
+			public const int BrowseMode_TopAllTime = 2130968580;
+			
+			// aapt resource value: 0x7f040006
+			public const int BrowseMode_TopMonth = 2130968582;
+			
+			// aapt resource value: 0x7f040007
+			public const int BrowseMode_TopWeek = 2130968583;
+			
+			// aapt resource value: 0x7f040005
+			public const int BrowseMode_TopYear = 2130968581;
 			
 			// aapt resource value: 0x7f040001
-			public const int hello = 2130968577;
+			public const int MangoPlayer = 2130968577;
 			
-			// aapt resource value: 0x7f040002
-			public const int refreshButton = 2130968578;
+			// aapt resource value: 0x7f040000
+			public const int NextButton = 2130968576;
+			
+			// aapt resource value: 0x7f040008
+			public const int OpenInYouTubeApp = 2130968584;
+			
+			// aapt resource value: 0x7f04000a
+			public const int Refresh = 2130968586;
+			
+			// aapt resource value: 0x7f04000b
+			public const int Refreshed = 2130968587;
+			
+			// aapt resource value: 0x7f040009
+			public const int Share = 2130968585;
 			
 			static String()
 			{

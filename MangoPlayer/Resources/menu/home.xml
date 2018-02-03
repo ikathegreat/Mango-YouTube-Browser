@@ -1,51 +1,50 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <!--For all properties see: http://developer.android.com/guide/topics/resources/menu-resource.html-->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-  <item
+  <!--<item
        android:id="@+id/menu_Share"
        android:showAsAction="ifRoom"
        android:icon="@mipmap/ic_share_white_24dp"
-       android:title="Share" />
+       android:title="@string/Share" />-->
   <item
        android:id="@+id/menu_refresh"
        android:icon="@mipmap/ic_autorenew_white_24dp"
        android:showAsAction="ifRoom"
-       android:title="Refresh" />
+       android:title="@string/Refresh" />
+  <item
+    android:id="@+id/menu_item_share"
+    android:showAsAction="ifRoom"
+    android:icon="@mipmap/ic_share_white_24dp"
+    android:title="@string/Share"/>
   <item
     android:id="@+id/menu_browseMode"
     android:showAsAction="never"
-    android:title="Browse Mode" >
+    android:title="@string/BrowseMode" >
     <menu>
       <item
            android:id="@+id/menu_browseMode_latest"
            android:showAsAction="never"
-           android:title="Latest" />
+           android:title="@string/BrowseMode_Latest" />
       <item
            android:id="@+id/menu_browseMode_topAllTime"
            android:showAsAction="never"
-           android:title="Top - All Time" />
+           android:title="@string/BrowseMode_TopAllTime" />
       <item
            android:id="@+id/menu_browseMode_topYear"
            android:showAsAction="never"
-           android:title="Top - Year" />
+           android:title="@string/BrowseMode_TopYear" />
       <item
            android:id="@+id/menu_browseMode_topMonth"
            android:showAsAction="never"
-           android:title="Top - Month" />
+           android:title="@string/BrowseMode_TopMonth" />
       <item
            android:id="@+id/menu_browseMode_topWeek"
            android:showAsAction="never"
-           android:title="Top - Week" />
-      
-      
+           android:title="@string/BrowseMode_TopWeek" />    
     </menu>
   </item>
   <item
-       android:id="@+id/menu_OpenInYouTube"
-       android:showAsAction="never"
-       android:title="Open in YouTube" />
-  <!--<item
-       android:id="@+id/menu_AutoPlay"
-       android:showAsAction="never"
-       android:title="Auto Play" />-->
+    android:id="@+id/menu_OpenInYouTube"
+    android:showAsAction="never"
+    android:title="@string/OpenInYouTubeApp" />
 </menu>

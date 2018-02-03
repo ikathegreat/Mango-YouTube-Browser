@@ -8,8 +8,6 @@ using System.Linq;
 using System.Collections.Generic;
 using System;
 using Android.Content;
-using Com.Cloudrail.SI;
-using Com.Cloudrail.SI.Services;
 using System.Threading.Tasks;
 using static MangoPlayer.Constants;
 
@@ -18,7 +16,8 @@ namespace MangoPlayer
     [Activity(Label = "Mango Player", MainLauncher = true, Icon = "@mipmap/ic_add_to_queue_black_48dp")]
     public class MainActivity : Activity
     {
-        //Button refreshButton;
+        bool showDebugMessage = false;
+
         Button nextButton;
         IMenuItem browseMode_latest;
         IMenuItem browseMode_topAllTime;
@@ -26,37 +25,13 @@ namespace MangoPlayer
         IMenuItem browseMode_topMonth;
         IMenuItem browseMode_topWeek;
 
-        //IMenuItem option_autoPlay;
-
-        //int stateData.CurrentPageIndex = 1;
-        //int stateData.CurrentVideoIndex = 1;
-        //List<string> stateData.CurrentPageVideoList = new List<string>();
-
-        //string stateData.FullFeedUrl = string.Empty;
-
-
-        //const string feedUrlPrefix = "http://bestofyoutube.com/index.php?page=";
-        //const string feedUrlSuffix = "&show=";
-
-        //const string feedTopSuffixAllTime = "alltime";
-        //const string feedTopSuffixYear = "year";
-        //const string feedTopSuffixMonth = "month";
-        //const string feedTopSuffixWeek = "week";
-
-        //BrowseMode browseMode = BrowseMode.Latest;
-
-        //enum BrowseMode { Latest, AllTime, Year, Month, Week };
-
-        private static readonly string TAG_RETAINED_FRAGMENT = "RetainedFragment";
         private RetainedFragment mRetainedFragment;
-
+        private ShareActionProvider mShareActionProvider;
         private StateData stateData = new StateData();
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-
-            //retrieveSet();
 
             debugAlertMessage("onafter_OnCreate");
 
@@ -73,37 +48,31 @@ namespace MangoPlayer
                 ActionBar.Title = "Latest";
             debugAlertMessage("onafter_SetActionBar");
 
-
-            // Get our button from the layout resource,
-            // and attach an event to it
-            //refreshButton = FindViewById<Button>(Resource.Id.refreshButton);
             nextButton = FindViewById<Button>(Resource.Id.nextButton);
             WebView localWebView = FindViewById<WebView>(Resource.Id.LocalWebView);
             localWebView.Settings.JavaScriptEnabled = true;
 
             debugAlertMessage("onafter_findLocalWebView");
 
-            //refreshButton.Click += delegate
-            //{
-            //    refresh();
-            //};
-            nextButton.Click += delegate
-            {
-                next();
-            };
+            nextButton.Click += delegate { navigateToNextVideo(); };
 
             // find the retained fragment on activity restarts
             mRetainedFragment = (RetainedFragment)FragmentManager.FindFragmentByTag(TAG_RETAINED_FRAGMENT);
             if (mRetainedFragment != null)
             {
                 stateData = mRetainedFragment.getData();
+                loadWebViewUrl();
             }
-            refresh();
+            else
+            {
+                //First time startup
+                refresh();
+            }
 
             debugAlertMessage("onafter_refresh");
 
             this.Window.AddFlags(WindowManagerFlags.Fullscreen);
-            //this.Window.ClearFlags(WindowManagerFlags.Fullscreen);
+            //this.Window.ClearFlags(WindowManagerFlags.Fullscreen); //this restores the notification bar
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
@@ -134,52 +103,26 @@ namespace MangoPlayer
             {
                 // we will not need this fragment anymore, this may also be a good place to signal
                 // to the retained fragment object to perform its own cleanup.
-                FragmentManager.BeginTransaction().Remove(mRetainedFragment).Commit();
+                if (mRetainedFragment != null)
+                    FragmentManager.BeginTransaction().Remove(mRetainedFragment).Commit();
 
             }
         }
 
-        protected override void OnDestroy()
+        private void debugAlertMessage(string message, string title = "Debug Message")
         {
-            //saveSet();
-            base.OnDestroy();
-        }
-        protected void saveSet()
-        {
+            if (!showDebugMessage)
+                return;
 
-            //store
-            //ISharedPreferences prefs = Application.Context.GetSharedPreferences("MangoPlayer", FileCreationMode.Private);
-            //ISharedPreferencesEditor prefEditor = prefs.Edit();
-            //prefEditor.PutBoolean("startupDone", startupDone);
-            //prefEditor.Commit();
-
-        }
-
-        // Function called from OnCreate
-        protected void retrieveSet()
-        {
-            //retreive 
-            ISharedPreferences prefs = Application.Context.GetSharedPreferences("MangoPlayer", FileCreationMode.Private);
-            bool somePref = prefs.GetBoolean("startupDone", false);
-
-            //Show a toast
-            //string test = startupDone ? "true" : "false";
-            //RunOnUiThread(() => Toast.MakeText(this, test, ToastLength.Long).Show());
-
-        }
-
-        private void debugAlertMessage(string message, string title = "debug")
-        {
-
-            //AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-            //AlertDialog alert = dialog.Create();
-            //alert.SetTitle(title);
-            //alert.SetMessage(message);
-            //alert.SetButton("OK", (c, ev) =>
-            //{
-            //    // Ok button click task  
-            //});
-            //alert.Show();
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            AlertDialog alert = dialog.Create();
+            alert.SetTitle(title);
+            alert.SetMessage(message);
+            alert.SetButton("OK", (c, ev) =>
+            {
+                // Ok button click task  
+            });
+            alert.Show();
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -192,15 +135,12 @@ namespace MangoPlayer
             browseMode_topMonth = menu.FindItem(Resource.Id.menu_browseMode_topMonth);
             browseMode_topWeek = menu.FindItem(Resource.Id.menu_browseMode_topWeek);
 
-            //option_autoPlay = menu.FindItem(Resource.Id.menu_AutoPlay);
-
             browseMode_latest.SetCheckable(true);
             browseMode_topAllTime.SetCheckable(true);
             browseMode_topYear.SetCheckable(true);
             browseMode_topMonth.SetCheckable(true);
             browseMode_topWeek.SetCheckable(true);
 
-            //option_autoPlay.SetCheckable(true);
 
             browseMode_latest.SetChecked(true);
 
@@ -209,134 +149,82 @@ namespace MangoPlayer
 
         private void openCurVideoInYouTube()
         {
-
             var uri = Android.Net.Uri.Parse(stateData.CurrentPageVideoList[stateData.CurrentVideoIndex]);
             var intent = new Intent(Intent.ActionView, uri);
             StartActivity(intent);
         }
 
-
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
-            // Toast.MakeText(this, item.TitleFormatted, ToastLength.Short).Show();
-
-            if (item.TitleFormatted.ToString() == "Refresh")
-            {
+            if (item.TitleFormatted.ToString() == Resources.GetString(Resource.String.Refresh))
                 refresh(true);
-                return base.OnOptionsItemSelected(item);
-            }
 
-            if (item.TitleFormatted.ToString() == "Open in YouTube")
-            {
+            if (item.TitleFormatted.ToString() == Resources.GetString(Resource.String.OpenInYouTubeApp))
                 openCurVideoInYouTube();
-                return base.OnOptionsItemSelected(item);
-            }
 
-            if (item.TitleFormatted.ToString() == "Share")
+            if (item.TitleFormatted.ToString() == Resources.GetString(Resource.String.Share))
             {
                 Intent intentsend = new Intent();
                 intentsend.SetAction(Intent.ActionSend);
                 intentsend.PutExtra(Intent.ExtraText, stateData.CurrentPageVideoList[stateData.CurrentVideoIndex]);
                 intentsend.SetType("text/plain");
-                StartActivity(intentsend);
-                return base.OnOptionsItemSelected(item);
+                StartActivity(intentsend); //This does Just One or Always prompt
             }
 
-            if (item.TitleFormatted.ToString() == "Auto Play")
+            if (item.TitleFormatted.ToString() == Resources.GetString(Resource.String.BrowseMode_Latest))
             {
-                //autoPlay = !autoPlay;
-                //option_autoPlay.SetChecked(autoPlay);
-                return base.OnOptionsItemSelected(item);
+                ActionBar.Title = Resources.GetString(Resource.String.BrowseMode_Latest);
+                updateBrowseMode(BrowseMode.Latest);
             }
-
-            if (item.TitleFormatted.ToString() == "Latest")
+            else if (item.TitleFormatted.ToString() == Resources.GetString(Resource.String.BrowseMode_TopAllTime))
             {
-                stateData.FullFeedUrl = feedUrlPrefix + stateData.CurrentPageIndex;
-                ActionBar.Title = "Latest";
-
-                browseMode_latest.SetChecked(true);
-                browseMode_topAllTime.SetChecked(false);
-                browseMode_topYear.SetChecked(false);
-                browseMode_topMonth.SetChecked(false);
-                browseMode_topWeek.SetChecked(false);
-                stateData.BrowseMode = BrowseMode.Latest;
-                refresh();
+                ActionBar.Title = Resources.GetString(Resource.String.BrowseMode_TopAllTime);
+                updateBrowseMode(BrowseMode.AllTime);
             }
-            else if (item.TitleFormatted.ToString() == "Top - All Time")
+            else if (item.TitleFormatted.ToString() == Resources.GetString(Resource.String.BrowseMode_TopYear))
             {
-                ActionBar.Title = "Top - All Time";
-
-                browseMode_latest.SetChecked(false);
-                browseMode_topAllTime.SetChecked(true);
-                browseMode_topYear.SetChecked(false);
-                browseMode_topMonth.SetChecked(false);
-                browseMode_topWeek.SetChecked(false);
-                stateData.BrowseMode = BrowseMode.AllTime;
-
-                refresh();
+                ActionBar.Title = Resources.GetString(Resource.String.BrowseMode_TopYear);
+                updateBrowseMode(BrowseMode.Year);
             }
-            else if (item.TitleFormatted.ToString() == "Top - Year")
+            else if (item.TitleFormatted.ToString() == Resources.GetString(Resource.String.BrowseMode_TopMonth))
             {
-                ActionBar.Title = "Top - Year";
-
-                browseMode_latest.SetChecked(false);
-                browseMode_topAllTime.SetChecked(false);
-                browseMode_topYear.SetChecked(true);
-                browseMode_topMonth.SetChecked(false);
-                browseMode_topWeek.SetChecked(false);
-                stateData.BrowseMode = BrowseMode.Year;
-
-                refresh();
+                ActionBar.Title = Resources.GetString(Resource.String.BrowseMode_TopMonth);
+                updateBrowseMode(BrowseMode.Month);
             }
-            else if (item.TitleFormatted.ToString() == "Top - Month")
+            else if (item.TitleFormatted.ToString() == Resources.GetString(Resource.String.BrowseMode_TopWeek))
             {
-                ActionBar.Title = "Top - Month";
-
-                browseMode_latest.SetChecked(false);
-                browseMode_topAllTime.SetChecked(false);
-                browseMode_topYear.SetChecked(false);
-                browseMode_topMonth.SetChecked(true);
-                browseMode_topWeek.SetChecked(false);
-                stateData.BrowseMode = BrowseMode.Month;
-
-                refresh();
-
-            }
-            else if (item.TitleFormatted.ToString() == "Top - Week")
-            {
-                ActionBar.Title = "Top - Week";
-
-                browseMode_latest.SetChecked(false);
-                browseMode_topAllTime.SetChecked(false);
-                browseMode_topYear.SetChecked(false);
-                browseMode_topMonth.SetChecked(false);
-                browseMode_topWeek.SetChecked(true);
-                stateData.BrowseMode = BrowseMode.Week;
-
-                refresh();
+                ActionBar.Title = Resources.GetString(Resource.String.BrowseMode_TopWeek);
+                updateBrowseMode(BrowseMode.Week);
             }
 
             return base.OnOptionsItemSelected(item);
         }
 
-        void next()
+        private void updateBrowseMode(BrowseMode browseMode)
+        {
+            stateData.BrowseMode = browseMode;
+            browseMode_latest.SetChecked(browseMode == BrowseMode.Latest);
+            browseMode_topAllTime.SetChecked(browseMode == BrowseMode.AllTime);
+            browseMode_topYear.SetChecked(browseMode == BrowseMode.Year);
+            browseMode_topMonth.SetChecked(browseMode == BrowseMode.Month);
+            browseMode_topWeek.SetChecked(browseMode == BrowseMode.Week);
+            refresh();
+        }
+
+        void navigateToNextVideo()
         {
             stateData.CurrentVideoIndex++;
-            if (stateData.CurrentVideoIndex > stateData.CurrentPageVideoList.Count)
+            if (stateData.CurrentVideoIndex > stateData.CurrentPageVideoList.Count - 1)
             {
                 stateData.CurrentPageIndex++;
                 stateData.CurrentVideoIndex = 0;
-                refresh();
+                loadWebViewUrl();
             }
             else
             {
-
                 WebView localWebView = FindViewById<WebView>(Resource.Id.LocalWebView);
                 localWebView.SetWebViewClient(new WebViewClient());
                 string url = stateData.CurrentPageVideoList[stateData.CurrentVideoIndex];
-
-                //if (autoPlay)
-                //    url += "?rel=0&autoplay=1";
 
                 localWebView.LoadUrl(url);
             }
@@ -344,97 +232,47 @@ namespace MangoPlayer
 
         void refresh(bool showToast = false)
         {
-            //refreshButton.Enabled = false;
             stateData.CurrentPageIndex = 1;
             stateData.CurrentVideoIndex = 0;
 
-            try
+            loadWebViewUrl();
+            if (showToast)
+                RunOnUiThread(() => Toast.MakeText(this, Resources.GetString(Resource.String.Refreshed), ToastLength.Long).Show());
+        }
+
+        private void loadWebViewUrl()
+        {
+            switch (stateData.BrowseMode)
             {
-                if (stateData.BrowseMode == BrowseMode.Latest)
-                {
+                case BrowseMode.Latest:
                     stateData.FullFeedUrl = feedUrlPrefix + stateData.CurrentPageIndex;
-                }
-                else if (stateData.BrowseMode == BrowseMode.AllTime)
-                {
-
+                    break;
+                case BrowseMode.AllTime:
                     stateData.FullFeedUrl = feedUrlPrefix + stateData.CurrentPageIndex + feedUrlSuffix + feedTopSuffixAllTime;
-                }
-                else if (stateData.BrowseMode == BrowseMode.Year)
-                {
+                    break;
+                case BrowseMode.Year:
                     stateData.FullFeedUrl = feedUrlPrefix + stateData.CurrentPageIndex + feedUrlSuffix + feedTopSuffixYear;
-                }
-                else if (stateData.BrowseMode == BrowseMode.Month)
-                {
+                    break;
+                case BrowseMode.Month:
                     stateData.FullFeedUrl = feedUrlPrefix + stateData.CurrentPageIndex + feedUrlSuffix + feedTopSuffixMonth;
-                }
-                else if (stateData.BrowseMode == BrowseMode.Week)
-                {
+                    break;
+                case BrowseMode.Week:
                     stateData.FullFeedUrl = feedUrlPrefix + stateData.CurrentPageIndex + feedUrlSuffix + feedTopSuffixWeek;
-                }
-
-                string urlToGet = stateData.FullFeedUrl;
-                stateData.CurrentPageVideoList = fetchBOYTPageVideos(urlToGet);
-
-                WebView localWebView = FindViewById<WebView>(Resource.Id.LocalWebView);
-                localWebView.SetWebViewClient(new WebViewClient());
-                localWebView.LoadUrl(stateData.CurrentPageVideoList[stateData.CurrentVideoIndex]);
-
-                //youtubeApiTest();
+                    break;
+                default:
+                    stateData.FullFeedUrl = feedUrlPrefix + stateData.CurrentPageIndex;
+                    break;
             }
-            finally
-            {
-                if (showToast)
-                    RunOnUiThread(() => Toast.MakeText(this, "Refreshed", ToastLength.Long).Show());
-            }
+
+            string urlToGet = stateData.FullFeedUrl;
+            stateData.CurrentPageVideoList = WebHelper.FetchVideoList(urlToGet);
+
+            WebView localWebView = FindViewById<WebView>(Resource.Id.LocalWebView);
+            localWebView.SetWebViewClient(new WebViewClient());
+            localWebView.LoadUrl(stateData.CurrentPageVideoList[stateData.CurrentVideoIndex]);
         }
 
-        private void youtubeApiTest()
-        {
-            var t = Task.Run(() =>
-            {
-                CloudRail.AppKey = "5a726594ff0b7e2f2f9ce356";
 
-                YouTube service = new YouTube(
-                    this,
-                    "656256027781-r7m8eqmkoo2rekjn2lnqdu9ac02vg2nj.apps.googleusercontent.com",
-                    "",
-                    "com.cloudrail.example:/auth",
-                    "someState"
-                );
-
-                // This service requires the advanced authentication method. Visit the tutorials page
-                // to learn more about the different authentication methods available.
-                service.UseAdvancedAuthentication();
-
-                service.Login();
-            });
-        }
-
-        List<string> fetchBOYTPageVideos(string url)
-        {
-            List<string> youtubeUrlList = new List<string>();
-
-            var web = new HtmlWeb();
-            var doc = web.Load(url);
-
-            if (doc.ParseErrors != null && doc.ParseErrors.Count() > 0)
-            {
-                // Handle any parse errors as required
-            }
-            else
-            {
-                youtubeUrlList = new List<string>();
-
-                foreach (HtmlNode link in doc.DocumentNode.SelectNodes("//@src"))
-                {
-                    HtmlAttribute att = link.Attributes["src"];
-                    youtubeUrlList.Add("https://" + att.Value.Remove(0, 6)); //remove preceeding //www.
-                }
-                youtubeUrlList = youtubeUrlList.Where(x => x.Contains("youtube.com")).ToList();
-
-            }
-            return youtubeUrlList;
-        }
     }
 }
 

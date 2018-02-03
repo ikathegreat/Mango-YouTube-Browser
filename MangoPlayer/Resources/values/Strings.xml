@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="hello">Hello World, Click Me!</string>
-  <string name="refreshButton">Refresh</string>
   <string name="NextButton">Next</string>
   <string name="MangoPlayer">Mango Player</string>
+  <string name="BrowseMode">Browse Mode</string>
+  <string name="BrowseMode_Latest">Latest</string>
+  <string name="BrowseMode_TopAllTime">Top - All Time</string>
+  <string name="BrowseMode_TopYear">Top - Year</string>
+  <string name="BrowseMode_TopMonth">Top - Month</string>
+  <string name="BrowseMode_TopWeek">Top - Week</string>
+  <string name="OpenInYouTubeApp">Open in YouTube</string>
+  <string name="Share">Share</string>
+  <string name="Refresh">Refresh</string>
+  <string name="Refreshed">Refreshed</string>
 </resources>

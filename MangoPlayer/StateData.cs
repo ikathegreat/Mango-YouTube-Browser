@@ -15,7 +15,10 @@ namespace MangoPlayer
 {
    public class StateData
     {
-
+        /// <summary>
+        /// Representation of current application settings or variables
+        /// to be saved to and retained in a Fragment
+        /// </summary>
         public StateData()
         {
             currentPageIndex = 1;
